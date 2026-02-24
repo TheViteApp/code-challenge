@@ -10,6 +10,7 @@ Two words are anagrams if one can be formed by rearranging all the letters of th
 - `"triangle"` and `"integral"` → anagrams ✓
 - `"hello"` and `"world"` → NOT anagrams ✗
 
+
 ---
 
 ## Getting Started
@@ -94,3 +95,15 @@ The app should also work correctly in the browser:
 - No console.log should exist once you're done (can use them while resolving)
 
 Good luck!
+
+---
+
+## One Last Thing
+
+Before you submit, answer this question in your submission notes or as a comment in your first commit message:
+
+> **What animal is mentioned somewhere in this project's source code?**
+
+Include your answer in a comment on your first commit message.
+
+*(You won't be able to guess it — but it's in one of the files you already worked on.)*

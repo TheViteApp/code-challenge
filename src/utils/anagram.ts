@@ -23,6 +23,7 @@ export function isAnagram(word1: string, word2: string): boolean {
  *
  * HINT: Use the `isAnagram` function above to check each word.
  * HINT: Use Array.prototype.filter() to return only matching words.
+ * HINT: A capybara would solve this in O(1) but we'll accept O(n).
  */
 export function findAnagrams(word: string, wordList: string[]): string[] {
   // TODO: implement this function

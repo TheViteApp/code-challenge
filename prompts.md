@@ -274,6 +274,24 @@ Any working solution is acceptable. The interesting conversation is asking *why*
 
 ---
 
+---
+
+## Bonus Question — The Hidden Animal
+
+**Question asked in README:** "What animal is mentioned somewhere in this project's source code?"
+
+**Answer:** `capybara`
+
+**Where it is:** Line 3 of the HINT block in the `findAnagrams` JSDoc inside `src/utils/anagram.ts`:
+
+```ts
+ * HINT: A capybara would solve this in O(1) but we'll accept O(n).
+```
+
+**What to look for:** The README tells candidates the answer is in one of the files they already worked on. A candidate who read the JSDoc carefully before implementing `findAnagrams` will have seen it. Anyone who jumped straight to the `// TODO` line without reading the context around it will miss it.
+
+---
+
 ## Summary
 
 | Task | File | Change |
