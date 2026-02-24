@@ -55,4 +55,17 @@ describe('AnagramForm', () => {
 
     expect(screen.getByText('No anagrams found.')).toBeInTheDocument();
   });
+
+  it('keeps results visible after the word input is edited', async () => {
+    const user = userEvent.setup();
+    render(<AnagramForm />);
+
+    await user.type(screen.getByLabelText('Word'), 'listen');
+    await user.type(screen.getByLabelText('Word List (comma-separated)'), 'silent, enlist');
+    await user.click(screen.getByRole('button', { name: 'Find Anagrams' }));
+
+    await user.type(screen.getByLabelText('Word'), '!');
+
+    expect(screen.getByText('Anagrams found:')).toBeInTheDocument();
+  });
 });

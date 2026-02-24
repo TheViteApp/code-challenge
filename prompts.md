@@ -94,65 +94,82 @@ export function findAnagrams(word: string, wordList: string[]): string[] {
 
 ---
 
-## Task 3 — Fix the React bug in `AnagramForm` (`src/components/AnagramForm.tsx`)
+## Task 3 — Fix the 3 React bugs in `AnagramForm` (`src/components/AnagramForm.tsx`)
 
-### The Bug
+There are three independent React bugs in this file. All three must be fixed for the tests to pass.
 
-The two `onChange` handlers are **swapped**. In React, a controlled input requires that:
-- `value` is bound to a state variable
-- `onChange` updates **that same state variable**
+---
 
-What the buggy code does instead:
+### Bug A — Direct state mutation
 
 ```tsx
-// "Word" input: value is `word`, but onChange updates `wordList`
-<input
-  id="word"
-  value={word}
-  onChange={(e) => setWordList(e.target.value)}  // ← wrong setter
-/>
-
-// "Word List" input: value is `wordList`, but onChange updates `word`
-<input
-  id="wordList"
-  value={wordList}
-  onChange={(e) => setWord(e.target.value)}  // ← wrong setter
-/>
+results.push(...anagrams);
+setResults(results); // ← same array reference
 ```
 
-**Symptom:** When the user types in either input, the wrong state is updated. Because `value={word}` is controlled by `word` state (which never changes when typing in that input), the input appears to stay blank.
+**Why it breaks:** React uses `Object.is` to compare the previous and next state. Because `results.push()` mutates the existing array in place, `setResults(results)` passes back the exact same reference. React sees no change and skips the re-render — the UI never updates.
 
-### The Fix
-
-Swap the `onChange` handlers so each input updates its own state:
+**Fix:** Replace both lines with a single call that creates a new array:
 
 ```tsx
-<input
-  id="word"
-  type="text"
-  value={word}
-  onChange={(e) => setWord(e.target.value)}
-/>
-
-<input
-  id="wordList"
-  type="text"
-  value={wordList}
-  onChange={(e) => setWordList(e.target.value)}
-/>
+setResults(anagrams);
 ```
 
-### Why this is a React-specific concept
+---
 
-In plain HTML, an `<input>` manages its own value internally. In React, when you set `value={...}` on an input, React **takes control** of that value — the input will only display what React tells it to. This is called a **controlled component**.
+### Bug B — Stale closure in `useCallback`
 
-The contract of a controlled component is:
-1. React sets the displayed value via `value`
-2. User interaction fires `onChange`
-3. The handler updates state
-4. React re-renders with the new state value
+```tsx
+const handleSubmit = useCallback((event) => {
+  const candidates = wordList.split(',')...; // wordList is always ''
+  const anagrams = findAnagrams(word, candidates); // word is always ''
+}, []); // ← missing dependencies
+```
 
-If step 3 updates the wrong state variable, the displayed value never changes, making the input feel frozen.
+**Why it breaks:** `useCallback` with an empty dependency array creates the function once at mount time and never recreates it. The `word` and `wordList` variables captured inside are frozen at their initial values (empty strings). Every submit call effectively runs `findAnagrams('', [])`.
+
+**Fix A — Add the missing dependencies:**
+
+```tsx
+const handleSubmit = useCallback((event) => {
+  // word and wordList now always reflect current state
+}, [word, wordList]);
+```
+
+**Fix B — Remove `useCallback` entirely (simpler, equally correct):**
+
+```tsx
+function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+  // plain function, always closes over current state
+}
+```
+
+> `useCallback` is a performance optimisation for referential stability (e.g. preventing child re-renders). For a form submit handler in a component like this, it adds complexity with no benefit.
+
+---
+
+### Bug C — `useEffect` that wipes results on every keystroke
+
+```tsx
+useEffect(() => {
+  setResults([]);
+  setSubmitted(false);
+}, [word]); // runs every time the word input changes
+```
+
+**Why it breaks:** Every character the user types in the Word field triggers this effect, resetting `results` and `submitted` back to their initial state. Results disappear the moment the user edits the word input after submitting.
+
+**Fix:** Delete this `useEffect` entirely — it has no valid purpose in this component.
+
+---
+
+### What each bug tests
+
+| Bug | React concept |
+|-----|--------------|
+| Direct mutation | State immutability — React requires new references to detect changes |
+| Stale `useCallback` | Closures and hook dependencies — captured values freeze at creation time |
+| `useEffect` wipe | Effect lifecycle — side effects that run too broadly cause unexpected resets |
 
 ---
 

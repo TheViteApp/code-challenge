@@ -54,9 +54,9 @@ The `findAnagrams` function is currently empty — it always returns `[]`. Imple
 
 ---
 
-### Task 3 — Fix the React bug in `AnagramForm` (`src/components/AnagramForm.tsx`)
+### Task 3 — Fix the React component (`src/components/AnagramForm.tsx`)
 
-The form component has a bug that causes the inputs to behave unexpectedly. When you type in one field, the wrong state gets updated. Find where the bug is and correct it.
+Something is wrong with `AnagramForm`. The form renders correctly but does not behave as expected. Read the component carefully, find what's broken, and fix it.
 
 ---
 

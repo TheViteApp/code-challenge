@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { findAnagrams } from '../utils/anagram';
 import { findDuplicates } from '../utils/duplicates';
 
@@ -9,17 +9,23 @@ function AnagramForm() {
   const [duplicates, setDuplicates] = useState<string[]>([]);
   const [submitted, setSubmitted] = useState(false);
 
-  function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+  useEffect(() => {
+    setResults([]);
+    setSubmitted(false);
+  }, [word]);
+
+  const handleSubmit = useCallback((event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const candidates = wordList
       .split(',')
       .map((w) => w.trim())
       .filter(Boolean);
     const anagrams = findAnagrams(word, candidates);
-    setResults(anagrams);
+    results.push(...anagrams);
+    setResults(results);
     setDuplicates(findDuplicates(candidates));
     setSubmitted(true);
-  }
+  }, []);
 
   return (
     <form onSubmit={handleSubmit}>
@@ -29,7 +35,7 @@ function AnagramForm() {
           id="word"
           type="text"
           value={word}
-          onChange={(e) => setWordList(e.target.value)}
+          onChange={(e) => setWord(e.target.value)}
         />
       </div>
 
@@ -39,7 +45,7 @@ function AnagramForm() {
           id="wordList"
           type="text"
           value={wordList}
-          onChange={(e) => setWord(e.target.value)}
+          onChange={(e) => setWordList(e.target.value)}
         />
       </div>
 
@@ -56,9 +62,7 @@ function AnagramForm() {
         </div>
       )}
 
-      {submitted && results.length === 0 && (
-        <p className="no-results">No anagrams found.</p>
-      )}
+      {submitted && results.length === 0 && <p className="no-results">No anagrams found.</p>}
 
       {submitted && (
         <div className="duplicates">
