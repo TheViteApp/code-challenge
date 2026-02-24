@@ -1,10 +1,12 @@
 import { useState } from 'react';
 import { findAnagrams } from '../utils/anagram';
+import { findDuplicates } from '../utils/duplicates';
 
 function AnagramForm() {
   const [word, setWord] = useState('');
   const [wordList, setWordList] = useState('');
   const [results, setResults] = useState<string[]>([]);
+  const [duplicates, setDuplicates] = useState<string[]>([]);
   const [submitted, setSubmitted] = useState(false);
 
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
@@ -15,6 +17,7 @@ function AnagramForm() {
       .filter(Boolean);
     const anagrams = findAnagrams(word, candidates);
     setResults(anagrams);
+    setDuplicates(findDuplicates(candidates));
     setSubmitted(true);
   }
 
@@ -55,6 +58,21 @@ function AnagramForm() {
 
       {submitted && results.length === 0 && (
         <p className="no-results">No anagrams found.</p>
+      )}
+
+      {submitted && (
+        <div className="duplicates">
+          <h2>Duplicate words:</h2>
+          {duplicates.length > 0 ? (
+            <ul>
+              {duplicates.map((duplicate) => (
+                <li key={duplicate}>{duplicate}</li>
+              ))}
+            </ul>
+          ) : (
+            <p className="no-results">No duplicate words in the list.</p>
+          )}
+        </div>
       )}
     </form>
   );

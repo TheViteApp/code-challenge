@@ -4,6 +4,7 @@ import { join } from 'path';
 
 const SOURCE_FILES = [
   join(process.cwd(), 'src/utils/anagram.ts'),
+  join(process.cwd(), 'src/utils/duplicates.ts'),
   join(process.cwd(), 'src/components/AnagramForm.tsx'),
 ];
 

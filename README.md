@@ -29,7 +29,7 @@ Run `pnpm test` first — you'll see several tests failing. Your goal is to make
 
 ## Your Tasks
 
-There are **3 things** to fix or implement. All changes belong in exactly two files:
+The required tasks touch exactly these files:
 
 - `src/utils/anagram.ts`
 - `src/components/AnagramForm.tsx`
@@ -60,6 +60,18 @@ The form component has a bug that causes the inputs to behave unexpectedly. When
 
 ---
 
+## Optional Task — Duplicates (`src/utils/duplicates.ts`)
+
+The form also shows duplicate words from your word list after each submit.
+There are two functions in `src/utils/duplicates.ts`:
+
+- `hasDuplicate(arr)` — has a bug. Find and fix it.
+- `findDuplicates(arr)` — is empty. Implement it so it returns all values that appear more than once (each listed once).
+
+> There is no single correct solution for `findDuplicates` — any working approach is valid.
+
+---
+
 ## Acceptance Criteria
 
 When all tasks are complete, running `pnpm test` must show **all tests passing**.
@@ -67,15 +79,16 @@ When all tasks are complete, running `pnpm test` must show **all tests passing**
 The app should also work correctly in the browser:
 
 1. Type a word (e.g. `listen`) in the **Word** field
-2. Type a comma-separated list (e.g. `silent, hello, enlist, world`) in the **Word List** field
+2. Type a comma-separated list (e.g. `silent, hello, enlist, silent`) in the **Word List** field
 3. Click **Find Anagrams**
-4. The results should show `silent` and `enlist`
+4. Anagram results should show `silent` and `enlist`
+5. Duplicate words should show `silent`
 
 ---
 
 ## Rules
 
-- Only modify `src/utils/anagram.ts` and `src/components/AnagramForm.tsx`
+- Only modify `src/utils/anagram.ts`, `src/utils/duplicates.ts`, and `src/components/AnagramForm.tsx`
 - Do not install additional dependencies
 - Do not modify any files inside `src/__tests__/`
 - No console.log should exist once you're done (can use them while resolving)

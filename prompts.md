@@ -156,6 +156,124 @@ If step 3 updates the wrong state variable, the displayed value never changes, m
 
 ---
 
+---
+
+## Optional Task — Fix `hasDuplicate` + Implement `findDuplicates` (`src/utils/duplicates.ts`)
+
+### The Bug in `hasDuplicate`
+
+The function uses two nested loops to compare each pair of elements. The bug is in the inner loop's starting index: it starts at `j = i` instead of `j = i + 1`.
+
+When `j` starts at `i`, the very first comparison is always `arr[i] === arr[i]` — an element compared to **itself** — which is always `true`. So the function returns `true` immediately for any non-empty array, regardless of whether real duplicates exist.
+
+```ts
+// Buggy
+for (let j = i; j < arr.length; j++) {   // ← j starts at i
+  if (arr[i] === arr[j]) return true;     // arr[0] === arr[0] → always true
+}
+
+// Fixed
+for (let j = i + 1; j < arr.length; j++) { // ← j starts at i + 1
+  if (arr[i] === arr[j]) return true;
+}
+```
+
+---
+
+### `findDuplicates` — Multiple Valid Solutions
+
+The goal: return every value that appears more than once, with each value listed only once in the result.
+
+---
+
+#### Solution A — Frequency Map with `Map` (O(n), most efficient)
+
+```ts
+export function findDuplicates(arr: string[]): string[] {
+  const count = new Map<string, number>();
+  for (const item of arr) {
+    count.set(item, (count.get(item) ?? 0) + 1);
+  }
+  return [...new Set(arr.filter((item) => count.get(item)! > 1))];
+}
+```
+
+**How it works:** Build a frequency map in one pass, then filter the original array to items with count > 1. Wrapping in `Set` removes the repeated occurrences so each duplicate appears once in the result.
+
+**Complexity:** O(n) time, O(n) space. The most scalable approach — shows awareness of hash maps.
+
+---
+
+#### Solution B — `filter` with `indexOf` / `lastIndexOf` (O(n²), no extra data structure)
+
+```ts
+export function findDuplicates(arr: string[]): string[] {
+  return arr.filter((item, index) => arr.indexOf(item) !== arr.lastIndexOf(item) && arr.indexOf(item) === index);
+}
+```
+
+**How it works:** An item is a duplicate if its first occurrence (`indexOf`) differs from its last occurrence (`lastIndexOf`). The `arr.indexOf(item) === index` guard ensures each duplicate is only included once (at its first position).
+
+**Complexity:** O(n²) time due to repeated linear scans. Simpler to write but slower for large inputs.
+
+---
+
+#### Solution C — Nested loops (O(n²), fully manual)
+
+```ts
+export function findDuplicates(arr: string[]): string[] {
+  const result: string[] = [];
+  for (let i = 0; i < arr.length; i++) {
+    for (let j = i + 1; j < arr.length; j++) {
+      if (arr[i] === arr[j] && !result.includes(arr[i])) {
+        result.push(arr[i]);
+      }
+    }
+  }
+  return result;
+}
+```
+
+**How it works:** Compare every pair. When a match is found and the value hasn't been recorded yet, add it to results. The same loop structure as the fixed `hasDuplicate` — a candidate who spots this connection shows good pattern recognition.
+
+**Complexity:** O(n²) time, O(n) space. The most explicit approach, expected from candidates less familiar with higher-order functions.
+
+---
+
+#### Solution D — Sort then scan (O(n log n))
+
+```ts
+export function findDuplicates(arr: string[]): string[] {
+  const sorted = [...arr].sort();
+  const result: string[] = [];
+  for (let i = 0; i < sorted.length - 1; i++) {
+    if (sorted[i] === sorted[i + 1] && !result.includes(sorted[i])) {
+      result.push(sorted[i]);
+    }
+  }
+  return result;
+}
+```
+
+**How it works:** Sorting brings duplicates together as adjacent elements. One scan is enough to detect them. The spread `[...arr]` is important — it avoids mutating the original array.
+
+**Complexity:** O(n log n) time. A middle ground between the brute-force and the Map approach.
+
+---
+
+### What to look for in candidates
+
+| Approach | What it signals |
+|----------|----------------|
+| Solution A (Map) | Knows data structures, thinks about time complexity |
+| Solution B (indexOf/lastIndexOf) | Comfortable with array built-ins, concise thinking |
+| Solution C (nested loops) | Understands fundamentals, may be earlier in their learning |
+| Solution D (sort + scan) | Knows the sort trick, thinks algorithmically |
+
+Any working solution is acceptable. The interesting conversation is asking *why* they chose their approach.
+
+---
+
 ## Summary
 
 | Task | File | Change |
@@ -163,3 +281,5 @@ If step 3 updates the wrong state variable, the displayed value never changes, m
 | 1 — Fix `isAnagram` | `src/utils/anagram.ts` | Add `.toLowerCase()` on both words before sorting |
 | 2 — Implement `findAnagrams` | `src/utils/anagram.ts` | `return wordList.filter(w => isAnagram(word, w))` |
 | 3 — Fix React controlled inputs | `src/components/AnagramForm.tsx` | Swap the two `onChange` handlers |
+| Optional — Fix `hasDuplicate` | `src/utils/duplicates.ts` | Change `j = i` to `j = i + 1` in inner loop |
+| Optional — Implement `findDuplicates` | `src/utils/duplicates.ts` | Any of the 4 solutions above |

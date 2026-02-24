@@ -121,6 +121,31 @@ button[type='submit']:active {
   padding: 4px 12px;
 }
 
+.duplicates {
+  margin-top: 8px;
+  padding: 16px;
+  background-color: #1a1a1a;
+  border: 1px solid #2e2e2e;
+  border-radius: 8px;
+}
+
+.duplicates ul {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.duplicates ul li {
+  background-color: #1c1000;
+  border: 1px solid #92400e;
+  border-radius: 6px;
+  color: #fcd34d;
+  font-size: 0.875rem;
+  font-weight: 500;
+  padding: 4px 12px;
+}
+
 .no-results {
   margin-top: 8px;
   color: #52525b;
